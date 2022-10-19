@@ -1,4 +1,5 @@
 {
-    "api_endpoint": "https://api.libreview.io",
-    "api_token": "<yourApiToken>"
+    "api_endpoint": "https://api-eu.libreview.io",
+    "email": "<your_mail>",
+    "password": "<your_password>"
 }

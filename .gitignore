@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 settings.json
+settings_old.json
 export-output.json

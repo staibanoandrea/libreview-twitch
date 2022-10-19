@@ -20,12 +20,12 @@ Replace the `api_token` in the configuration file by your API token.
 
 > Note: there is no direct access to API tokens on the UI; you can login and use your
 browser Web Developer Network panel to search for a `Bearer` token on `Authorization`
-request header to api.libreview.io.
+request header to api-eu.libreview.io.
 
 Launch your first export:
 
 ```sh
-pipenv run python export-data.py
+pipenv run python extract-last-measurement.py
 ```
 
 This will export the data to `export-output.json`.
