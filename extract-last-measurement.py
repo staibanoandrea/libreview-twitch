@@ -64,8 +64,6 @@ def get_latest_data():
     latest_graph_data = user_graph_data['graphData'][-1]
     measurement_timestamp = datetime.strptime(latest_glucose_measurement['Timestamp'], "%m/%d/%Y %I:%M:%S %p")
     graph_timestamp = datetime.strptime(latest_graph_data['Timestamp'], "%m/%d/%Y %I:%M:%S %p")
-    print(measurement_timestamp)
-    print(graph_timestamp)
     if measurement_timestamp > graph_timestamp :
         return latest_glucose_measurement
     else:
@@ -83,4 +81,4 @@ if __name__ == "__main__":
     data = get_latest_data()
     with open(output_json_file_path, "w") as ef:
         json.dump(data, ef)
-        print("Written LibreView data to {}".format(output_json_file_path))
+        print("Written LibreLink data to {}".format(output_json_file_path))
