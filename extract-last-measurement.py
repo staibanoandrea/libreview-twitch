@@ -1,15 +1,24 @@
 #!/bin/python
 # -*- coding: utf-8 -*-
-from asyncio.windows_events import NULL
+from flask import Flask
+from flask_cors import CORS
 from datetime import datetime
+from zoneinfo import ZoneInfo
+from bs4 import BeautifulSoup
 import json
-import pprint
 import requests
+import asyncio
+import aiohttp
 
 DEFAULT_SETTINGS_FILE_PATH = "settings.json"
 
 auth_token = ""
 user_id = ""
+
+data = {}
+
+app = Flask(__name__)
+CORS(app)
 
 
 def loads_settings(settings_file_path):
@@ -17,24 +26,29 @@ def loads_settings(settings_file_path):
     with open(settings_file_path, "r") as jfp:
         return json.load(jfp)
 
+
+settings = loads_settings(DEFAULT_SETTINGS_FILE_PATH)
+
+
 def login():
     global auth_token
     global user_id
     login_body = {}
-    login_body['email'] = settings["email"]
-    login_body['password'] = settings["password"]
+    login_body["email"] = settings["email"]
+    login_body["password"] = settings["password"]
     response = requests.post(
         "{}/llu/auth/login".format(settings["api_endpoint"]),
         headers={
             "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.2.1"
-            },
-        data=json.dumps(login_body)
+            "version": "4.2.1",
+        },
+        data=json.dumps(login_body),
     )
     response_json = response.json()
-    auth_token = response_json['data']['authTicket']['token']
-    user_id = response_json['data']['user']['id']
+    auth_token = response_json["data"]["authTicket"]["token"]
+    user_id = response_json["data"]["user"]["id"]
+
 
 #   TODO if you're not self-following your data:
 # def get_connections(settings):
@@ -47,38 +61,92 @@ def login():
 #        }
 #    )
 
+
 def get_user_graph():
     response = requests.get(
         "{}/llu/connections/{}/graph".format(settings["api_endpoint"], user_id),
         headers={
             "Authorization": "Bearer {}".format(auth_token),
             "product": "llu.android",
-            "version": "4.2.1"
-        }
+            "version": "4.2.1",
+        },
     )
     return response.json()
 
-def get_latest_data():
-    user_graph_data = get_user_graph()['data']
-    latest_glucose_measurement = user_graph_data['connection']['glucoseMeasurement']
-    latest_graph_data = user_graph_data['graphData'][-1]
-    measurement_timestamp = datetime.strptime(latest_glucose_measurement['Timestamp'], "%m/%d/%Y %I:%M:%S %p")
-    graph_timestamp = datetime.strptime(latest_graph_data['Timestamp'], "%m/%d/%Y %I:%M:%S %p")
-    if measurement_timestamp > graph_timestamp :
-        return latest_glucose_measurement
-    else:
-        return latest_graph_data
+def update_data():
+    global data
+    latest_glucose_measurement = get_user_graph()["data"]["connection"]["glucoseMeasurement"]
+    latest_glucose_measurement["Timestamp"] = datetime.strptime(
+        latest_glucose_measurement["Timestamp"], "%m/%d/%Y %I:%M:%S %p"
+    )
+    if len(data) == 0 or data["Timestamp"] < latest_glucose_measurement["Timestamp"]:
+        data = latest_glucose_measurement
+        data["MeasurementColor"] = get_color_by_value(data["MeasurementColor"])
+
+def get_color_by_value(color):
+    if color is None:
+        return "silver"
+    match color:
+        case 1:
+            return "olivedrab"
+        case 2:
+            return "orange"
+        case 3:
+            return "orangered"
+        case 4:
+            return "darkred"
+        case _:
+            return "silver"
+
+async def async_test():
+    data_url = "{}/llu/connections/{}/graph".format(settings["api_endpoint"], user_id)
+    headers={
+            "Authorization": "Bearer {}".format(auth_token),
+            "product": "llu.android",
+            "version": "4.2.1",
+        }
+    while True:
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.get(data_url) as response:
+                user_graph = await response.json()
+        await asyncio.sleep(60)
+
+async def update_data_loop():
+    global data
+    loop = asyncio.get_event_loop()
+    while True:
+        await loop.run_in_executor(None, update_data())
+        await asyncio.sleep(60)
 
 
-if __name__ == "__main__":
-    global settings
-    settings = loads_settings(DEFAULT_SETTINGS_FILE_PATH)
-    output_json_file_path = "export-output.json"
-
+@app.route("/latestglucose")
+def getLatestGlucose():
+    print("entered /latestglucose")
     if auth_token == "" or user_id == "":
         login()
-    
-    data = get_latest_data()
-    with open(output_json_file_path, "w") as ef:
-        json.dump(data, ef)
-        print("Written LibreLink data to {}".format(output_json_file_path))
+    update_data()
+    return data
+
+@app.route("/")
+def start():
+    with open("./index.html") as fp:
+        soup = BeautifulSoup(fp, 'html.parser')
+    #html_value = soup.find(id='value')
+    #html_trend_arrow = soup.find(id='trend-arrow')
+    #html_unit = soup.find(id='unit')
+    #html_container = soup.find(id='container')
+    if auth_token == "" or user_id == "":
+        login()
+    update_data()
+
+    #html_value.string = str(data['Value'])
+    #html_trend_arrow.string = str(data['TrendArrow'])
+    #html_unit.string = "mg/dL"
+    #html_container['style'] = "background: {};".format(get_color_by_value())
+
+    return str(soup.prettify())
+
+
+# da rimuovere su vero server
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=1337, debug=True)
