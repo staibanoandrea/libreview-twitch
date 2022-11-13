@@ -38,7 +38,15 @@
 
         .tile {
             float: left;
-            width: 70px;
+            width: 60px;
+            height: 40px;
+            padding: 5px;
+            margin: auto;
+        }
+
+        .second-tile {
+            float: left;
+            width: 30px;
             height: 40px;
             padding: 5px;
         }
@@ -52,27 +60,18 @@
         }
 
         #value {
-            margin: 0%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0px;
             height: 100%;
-            text-align: center;
             font-size: 2em;
             font-weight: bold;
         }
 
-        /*.trend-and-unit {
-            position: absolute;
-            padding-left: 80px;
-            padding-top: 10px;
-            top: 0;
-            height: 50px;
-            width: 70px;
-            max-width: 350px;
-            overflow: hidden;
-            vertical-align: middle;
-        }*/
-
         #trend-arrow {
-            display: block;
+            display: flex;
+            align-items: center;
             margin-left: auto;
             margin-right: auto;
             width: 30px;
@@ -80,29 +79,28 @@
         }
 
         #unit {
-            margin: 4px 0 0;
-            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0px;
+            font-size: 10px;
         }
 
-        /*.time {
-            position: absolute;
-            padding-left: 150px;
-            padding-top: 10px;
-            top: 0;
-            height: 50px;
-            width: 100%;
-            max-width: 350px;
-            overflow: hidden;
-        }*/
-
         #latest {
-            font-weight: 600;
-            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: right;
+            margin: 0px;
+            height: 50%;
             font-size: 15px;
         }
 
         #timestamp {
-            margin: 4px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: right;
+            margin: 0px;
+            height: 50%;
             font-size: 15px;
         }
     </style>
@@ -114,7 +112,7 @@
             <div class="tile">
                 <p id="value"></p>
             </div>
-            <div class="tile">
+            <div class="second-tile">
                 <img id="trend-arrow" src="static/arrow.png" alt="arrow"></img>
                 <h2 id="unit">mg/dL</h2>
             </div>

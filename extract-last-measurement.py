@@ -104,15 +104,15 @@ def get_angle_by_value(trend):
         return 0
     match trend:
         case 1:
-            return -90
+            return 90
         case 2:
-            return -45
+            return 45
         case 3:
             return 0
         case 4:
-            return 45
+            return -45
         case 5:
-            return 90
+            return -90
         case _:
             return 0
 
@@ -148,19 +148,9 @@ def getLatestGlucose():
 def start():
     with open("./index.html") as fp:
         soup = BeautifulSoup(fp, 'html.parser')
-    #html_value = soup.find(id='value')
-    #html_trend_arrow = soup.find(id='trend-arrow')
-    #html_unit = soup.find(id='unit')
-    #html_container = soup.find(id='container')
     if auth_token == "" or user_id == "":
         login()
     update_data()
-
-    #html_value.string = str(data['Value'])
-    #html_trend_arrow.string = str(data['TrendArrow'])
-    #html_unit.string = "mg/dL"
-    #html_container['style'] = "background: {};".format(get_color_by_value())
-
     return str(soup.prettify())
 
 
