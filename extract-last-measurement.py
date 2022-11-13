@@ -82,6 +82,7 @@ def update_data():
     if len(data) == 0 or data["Timestamp"] < latest_glucose_measurement["Timestamp"]:
         data = latest_glucose_measurement
         data["MeasurementColor"] = get_color_by_value(data["MeasurementColor"])
+        data["TrendArrow"] = get_angle_by_value(data["TrendArrow"])
 
 def get_color_by_value(color):
     if color is None:
@@ -97,6 +98,23 @@ def get_color_by_value(color):
             return "darkred"
         case _:
             return "silver"
+
+def get_angle_by_value(trend):
+    if trend is None:
+        return 0
+    match trend:
+        case 1:
+            return -90
+        case 2:
+            return -45
+        case 3:
+            return 0
+        case 4:
+            return 45
+        case 5:
+            return 90
+        case _:
+            return 0
 
 async def async_test():
     data_url = "{}/llu/connections/{}/graph".format(settings["api_endpoint"], user_id)
@@ -121,7 +139,6 @@ async def update_data_loop():
 
 @app.route("/latestglucose")
 def getLatestGlucose():
-    print("entered /latestglucose")
     if auth_token == "" or user_id == "":
         login()
     update_data()

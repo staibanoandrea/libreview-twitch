@@ -13,6 +13,7 @@ function getData() {
             /*trendArrow.innerHTML = response['TrendArrow'];*/
             timestamp.innerHTML = response['Timestamp'].substring(17, 25) + " CET";
             container.style.backgroundColor = response['MeasurementColor'];
+            trendArrow.style.transform = "rotate(" + response['TrendArrow'] + "deg)";
         }
     });
 }
