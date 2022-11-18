@@ -10,6 +10,8 @@ import requests
 import asyncio
 import aiohttp
 
+#NOTA Builds with command: pyinstaller --onefile --add-data "settings.json;json" extract-last-measurement.py
+
 DEFAULT_SETTINGS_FILE_PATH = "settings.json"
 
 auth_token = ""
