@@ -53,6 +53,7 @@
             float: right;
             height: 40px;
             padding: 5px;
+            width: 120px;
         }
 
         #value {
@@ -99,6 +100,13 @@
             height: 50%;
             font-size: 15px;
         }
+
+        #myChart {
+            width:100%;
+            max-width:100%;
+            height:100%;
+            margin-left: auto 0;
+        }
     </style>
 </head>
 
@@ -106,23 +114,24 @@
     <div class="wrapper">
         <div id="container">
             <div class="tile">
-                <p id="value"></p>
+                <span id="value"></span>
             </div>
             <div class="second-tile">
                 <img id="trend-arrow" src="static/arrow.png" alt="arrow"></img>
                 <h2 id="unit">mg/dL</h2>
             </div>
             <div class="last-tile">
-                <h2 id="latest">LATEST</h2>
-                <h2 id="timestamp"></h2>
+                <canvas id="myChart"></canvas>
+                <!--<h2 id="latest">LATEST</h2>
+                <h2 id="timestamp"></h2>-->
             </div>
         </div>
     </div>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type='text/javascript' src="static/controller.js"></script>
     <script type='text/javascript'>
-        getData();
-        setInterval("getData()", 20000);
+        loopData();
     </script>
 </body>
 

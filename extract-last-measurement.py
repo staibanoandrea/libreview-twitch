@@ -18,6 +18,7 @@ auth_token = ""
 user_id = ""
 
 data = {}
+data_history = list()
 
 app = Flask(__name__)
 CORS(app)
@@ -43,7 +44,7 @@ def login():
         headers={
             "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.2.1",
+            "version": "4.7.0",
         },
         data=json.dumps(login_body),
     )
@@ -59,7 +60,7 @@ def login():
 #        headers={
 #            "Authorization": "Bearer {}".format(settings["api_token"]),
 #            "product": "llu.android",
-#            "version": "4.2.1"
+#            "version": "4.7.0"
 #        }
 #    )
 
@@ -70,7 +71,7 @@ def get_user_graph():
         headers={
             "Authorization": "Bearer {}".format(auth_token),
             "product": "llu.android",
-            "version": "4.2.1",
+            "version": "4.7.0",
         },
     )
     return response.json()
@@ -85,6 +86,14 @@ def update_data():
         data = latest_glucose_measurement
         data["MeasurementColor"] = get_color_by_value(data["MeasurementColor"])
         data["TrendArrow"] = get_angle_by_value(data["TrendArrow"])
+        data["DataHistory"] = update_data_history(data["Value"])
+
+def update_data_history(value):
+    global data_history
+    data_history.append(value)
+    if len(data_history) > 60:
+        data_history.pop(0)
+    return data_history
 
 def get_color_by_value(color):
     if color is None:
@@ -123,7 +132,7 @@ async def async_test():
     headers={
             "Authorization": "Bearer {}".format(auth_token),
             "product": "llu.android",
-            "version": "4.2.1",
+            "version": "4.7.0",
         }
     while True:
         async with aiohttp.ClientSession(headers=headers) as session:
@@ -145,6 +154,15 @@ def getLatestGlucose():
         login()
     update_data()
     return data
+
+#@app.route("/graph")
+#def getLineGraph():
+#    with open("./graph.html") as fp:
+#        soup = BeautifulSoup(fp, 'html.parser')
+#    if auth_token == "" or user_id == "":
+#        login()
+#    update_data()
+#    return str(soup.prettify())
 
 @app.route("/")
 def start():
