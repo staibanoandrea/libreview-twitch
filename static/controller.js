@@ -34,19 +34,20 @@ function createChart(ctx_live) {
             labels: [],
             datasets: [{
                 data: [],
-                borderWidth: 1,
-                borderColor: '#000'
+                borderWidth: 1.5,
+                borderColor: '#000000',
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 0
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             elements: {
-                point: {
-                    radius: 0
-                },
                 line: {
-                    tension: 0.5
+                    tension: 0.4
                 }
             },
             scales: {
@@ -55,23 +56,27 @@ function createChart(ctx_live) {
                         display: false
                     },
                     grid: {
-                        display: false
+                        display: false,
+                        drawBorder: false
                     }
                 },
                 y: {
                     type: 'linear',
-                    grace: 0,
+                    grace: '5%',
                     ticks: {
                         display: true,
-                        color: '#000',
+                        color: '#000000',
                         font: {
-                            size: 10
+                            size: 8,
+                            family: 'Inter'
                         }
                     },
                     grid: {
-                        display: true
+                        display: true,
+                        color: '#000000',
+                        drawBorder: false
                     }
-                },
+                }
             },
             plugins: {
                 legend: {
@@ -81,64 +86,6 @@ function createChart(ctx_live) {
         }
     });
 }
-
-/*const maxData = 60;
-var postId = 1;
-var myChart;
-function getGraph() {
-    var ctx_live = document.getElementById("myChart");
-    myChart = new Chart(ctx_live, {
-        type: "line",
-        data: {
-            labels: [],
-            datasets: [{
-                data: [],
-                borderWidth: 1,
-                borderColor: '#000'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            elements: {
-                point: {
-                    radius: 0
-                },
-                line: {
-                    tension: 0.5
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        display: false
-                    },
-                    grid: {
-                        display: false
-                    }
-                },
-                y: {
-                    type: 'linear',
-                    grace: 0,
-                    ticks: {
-                        display: true,
-                        color: '#000',
-                        font: {
-                            size: 10
-                        }
-                    },
-                    grid: {
-                        display: true
-                    }
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });*/
 
 function updateGraph(chart, response) {
     if (getDatasetLength(chart) == 0) {
@@ -156,34 +103,6 @@ function updateGraph(chart, response) {
     }
     chart.update();
 }
-
-/*var updateGraph = function () {
-    $.ajax({
-        type: "GET",
-        url: "http://127.0.0.1:1337/latestglucose",
-        dataType: "json",
-        success: function (response) {
-            if (getDatasetLength() == 0) {
-                for (const value of response['DataHistory']) {
-                    myChart.data.labels.push(postId++);
-                    myChart.data.datasets[0].data.push(value);
-                }
-            } else {
-                myChart.data.labels.push(postId++);
-                myChart.data.datasets[0].data.push(response['Value']);
-            }
-            while (getDatasetLength() > maxData) {
-                myChart.data.labels.splice(0, 1);
-                myChart.data.datasets[0].data.splice(0, 1);
-            }
-            myChart.update();
-        }
-    });
-}
-
-updateGraph();
-setInterval(updateGraph, 60000);
-}*/
 
 function getDatasetLength(chart) {
     if (chart == null) return 0;

@@ -1,5 +1,6 @@
 #!/bin/python
 # -*- coding: utf-8 -*-
+from hashlib import sha256
 from flask import Flask
 from flask_cors import CORS
 from datetime import datetime
@@ -16,6 +17,7 @@ DEFAULT_SETTINGS_FILE_PATH = "settings.json"
 
 auth_token = ""
 user_id = ""
+account_id = ""
 
 data = {}
 data_history = list()
@@ -36,21 +38,27 @@ settings = loads_settings(DEFAULT_SETTINGS_FILE_PATH)
 def login():
     global auth_token
     global user_id
+    global account_id
     login_body = {}
     login_body["email"] = settings["email"]
     login_body["password"] = settings["password"]
     response = requests.post(
         "{}/llu/auth/login".format(settings["api_endpoint"]),
         headers={
+            "accept-encoding": "gzip",
+            "cache-control": "no-cache",
+            "Connection": "Keep-Alive",
             "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.7.0",
+            "version": "4.14.0",
         },
         data=json.dumps(login_body),
     )
     response_json = response.json()
+    print(response_json)
     auth_token = response_json["data"]["authTicket"]["token"]
     user_id = response_json["data"]["user"]["id"]
+    account_id = response_json["data"]["user"]["id"]
 
 
 #   TODO if you're not self-following your data:
@@ -60,20 +68,29 @@ def login():
 #        headers={
 #            "Authorization": "Bearer {}".format(settings["api_token"]),
 #            "product": "llu.android",
-#            "version": "4.7.0"
+#            "version": "4.14.0"
 #        }
 #    )
 
 
 def get_user_graph():
+    global user_id
+    global account_id
+    print(user_id)
     response = requests.get(
         "{}/llu/connections/{}/graph".format(settings["api_endpoint"], user_id),
         headers={
             "Authorization": "Bearer {}".format(auth_token),
+            "accept-encoding": "gzip",
+            "cache-control": "no-cache",
+            "Connection": "Keep-Alive",
+            "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.7.0",
+            "version": "4.14.0",
+            "account-id": sha256(account_id.encode('utf-8')).hexdigest(),
         },
     )
+    print(response.json())
     return response.json()
 
 def update_data():
@@ -100,15 +117,15 @@ def get_color_by_value(color):
         return "silver"
     match color:
         case 1:
-            return "olivedrab"
+            return "#10b981"
         case 2:
-            return "orange"
+            return "#f59e0b"
         case 3:
-            return "orangered"
+            return "#f5610b"
         case 4:
-            return "darkred"
+            return "#ef4444"
         case _:
-            return "silver"
+            return "#64748b"
 
 def get_angle_by_value(trend):
     if trend is None:
@@ -128,11 +145,17 @@ def get_angle_by_value(trend):
             return 0
 
 async def async_test():
+    global user_id
     data_url = "{}/llu/connections/{}/graph".format(settings["api_endpoint"], user_id)
     headers={
             "Authorization": "Bearer {}".format(auth_token),
+            "accept-encoding": "gzip",
+            "cache-control": "no-cache",
+            "Connection": "Keep-Alive",
+            "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.7.0",
+            "version": "4.14.0",
+            "account-id": sha256(account_id.encode('utf-8')).hexdigest(),
         }
     while True:
         async with aiohttp.ClientSession(headers=headers) as session:

@@ -6,13 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>LibreTwitch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         html,
         body {
-            font-family: 'proxima-nova', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
             overflow: hidden;
             padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .wrapper {
@@ -63,7 +65,8 @@
             margin: 0px;
             height: 100%;
             font-size: 36px;
-            font-weight: bold;
+            font-weight: 700;
+            color: #000000;
         }
 
         #trend-arrow {
@@ -73,6 +76,7 @@
             margin-right: auto;
             width: 30px;
             height: 30px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
         }
 
         #unit {
@@ -81,30 +85,16 @@
             justify-content: center;
             margin: 0px;
             font-size: 10px;
-        }
-
-        #latest {
-            display: flex;
-            align-items: center;
-            justify-content: right;
-            margin: 0px;
-            height: 50%;
-            font-size: 12px;
-        }
-
-        #timestamp {
-            display: flex;
-            align-items: center;
-            justify-content: right;
-            margin: 0px;
-            height: 50%;
-            font-size: 15px;
+            font-weight: 500;
+            color: #000000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         #myChart {
-            width:100%;
-            max-width:100%;
-            height:100%;
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
             margin-left: auto 0;
         }
     </style>
@@ -122,8 +112,6 @@
             </div>
             <div class="last-tile">
                 <canvas id="myChart"></canvas>
-                <!--<h2 id="latest">LATEST</h2>
-                <h2 id="timestamp"></h2>-->
             </div>
         </div>
     </div>
