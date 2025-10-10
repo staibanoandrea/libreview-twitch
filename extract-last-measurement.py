@@ -4,7 +4,6 @@ from hashlib import sha256
 from flask import Flask
 from flask_cors import CORS
 from datetime import datetime
-from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 import json
 import requests
@@ -18,6 +17,7 @@ DEFAULT_SETTINGS_FILE_PATH = "settings.json"
 auth_token = ""
 user_id = ""
 account_id = ""
+version = "4.16.0"
 
 data = {}
 data_history = list()
@@ -50,7 +50,7 @@ def login():
             "Connection": "Keep-Alive",
             "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.14.0",
+            "version": version,
         },
         data=json.dumps(login_body),
     )
@@ -68,7 +68,7 @@ def login():
 #        headers={
 #            "Authorization": "Bearer {}".format(settings["api_token"]),
 #            "product": "llu.android",
-#            "version": "4.14.0"
+#            "version": version
 #        }
 #    )
 
@@ -86,7 +86,7 @@ def get_user_graph():
             "Connection": "Keep-Alive",
             "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.14.0",
+            "version": version,
             "account-id": sha256(account_id.encode('utf-8')).hexdigest(),
         },
     )
@@ -95,6 +95,7 @@ def get_user_graph():
 
 def update_data():
     global data
+    print(get_user_graph()["data"])
     latest_glucose_measurement = get_user_graph()["data"]["connection"]["glucoseMeasurement"]
     latest_glucose_measurement["Timestamp"] = datetime.strptime(
         latest_glucose_measurement["Timestamp"], "%m/%d/%Y %I:%M:%S %p"
@@ -154,7 +155,7 @@ async def async_test():
             "Connection": "Keep-Alive",
             "content-type": "application/json",
             "product": "llu.android",
-            "version": "4.14.0",
+            "version": version,
             "account-id": sha256(account_id.encode('utf-8')).hexdigest(),
         }
     while True:
